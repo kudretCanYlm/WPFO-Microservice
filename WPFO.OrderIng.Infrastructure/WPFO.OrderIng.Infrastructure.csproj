@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\WPFO.Core\WPFO.Core.csproj" />
     <ProjectReference Include="..\WPFO.Ordering.Application\WPFO.Ordering.Application.csproj" />
   </ItemGroup>
 

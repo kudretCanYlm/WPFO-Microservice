@@ -3,10 +3,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using WPFO.DiscountRPC.Repositories;
 using WPFO.DiscountRPC.Repositories.Interfaces;
 using WPFO.DiscountRPC.Services;
@@ -37,7 +33,6 @@ namespace WPFO.DiscountRPC
 
 			app.UseEndpoints(endpoints =>
 			{
-				endpoints.MapGrpcService<GreeterService>();
 				endpoints.MapGrpcService<DiscountService>();
 
 				endpoints.MapGet("/", async context =>

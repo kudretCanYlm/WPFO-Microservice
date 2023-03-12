@@ -32,10 +32,10 @@ namespace WPFO.Catalog.Api.Controllers
             return Ok(products);
         }
 
-        [HttpGet("{id:length(36)",Name = "GetProduct")]
+        [HttpGet("{id}",Name = "GetProduct")]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(Product),(int)HttpStatusCode.OK)]
-        public async Task<ActionResult<Product>> GetProductById(Guid id)
+        public async Task<ActionResult<Product>> GetProductById(string id)
         {
             var product = await productRepository.GetProduct(id);
 
@@ -91,9 +91,9 @@ namespace WPFO.Catalog.Api.Controllers
             return Ok(await productRepository.UpdateProduct(product));
         }
 
-        [HttpDelete("{id:length(36)}", Name = "DeleteProduct")]
+        [HttpDelete("{id}", Name = "DeleteProduct")]
         [ProducesResponseType(typeof(Product), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> DeleteProductById(Guid id)
+        public async Task<IActionResult> DeleteProductById(string id)
         {
             return Ok(await productRepository.DeleteProduct(id));
         }

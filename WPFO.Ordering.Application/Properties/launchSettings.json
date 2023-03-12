@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "WPFO.Ordering.Application": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:50880;http://localhost:50881"
+    }
+  }
+}

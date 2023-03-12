@@ -8,7 +8,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
 using System.Text;
-using WPFO.Ordering.Application.Contracts.Persistence;
+using WPFO.Core.Repositories;
 using WPFO.Ordering.Application.Features.Orders.Commands.CheckoutOrder;
 
 namespace WPFO.Ordering.API.RabbitMQ
@@ -18,14 +18,12 @@ namespace WPFO.Ordering.API.RabbitMQ
 		private readonly IRabbitMQConnection _connection;
 		private readonly IMediator _mediator;
 		private readonly IMapper _mapper;
-		private readonly IOrderRepository _repository;
 
 		public EventBusRabbitMQConsumer(IRabbitMQConnection connection, IMediator mediator, IMapper mapper, IOrderRepository repository)
 		{
 			_connection = connection ?? throw new ArgumentNullException(nameof(connection));
 			_mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
 			_mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-			_repository = repository ?? throw new ArgumentNullException(nameof(repository));
 		}
 
 		public void Consume()

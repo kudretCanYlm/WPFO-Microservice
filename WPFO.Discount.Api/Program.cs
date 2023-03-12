@@ -1,11 +1,7 @@
+using Common.Logging;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Serilog;
 using WPFO.Discount.Api.Extensions;
 
 namespace WPFO.Discount.Api
@@ -22,7 +18,8 @@ namespace WPFO.Discount.Api
         //will add serilog
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
+			    //.UseSerilog(SeriLogger.Configure)
+				.ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
                 });

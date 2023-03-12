@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using WPFO.Ordering.Application.Contracts.Persistence;
+using WPFO.Core.Repositories;
 using WPFO.Ordering.Application.Exceptions;
 using WPFO.Ordering.Domain.Entities;
 

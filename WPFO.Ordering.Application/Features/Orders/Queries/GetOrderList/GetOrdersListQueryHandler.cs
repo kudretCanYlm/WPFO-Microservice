@@ -6,11 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using WPFO.Ordering.Application.Contracts.Persistence;
+using WPFO.Core.Repositories;
 
 namespace WPFO.Ordering.Application.Features.Orders.Queries.GetOrderList
 {
-	public class GetOrdersListQueryHandler : IRequestHandler<GetOrdersListQuery, List<OrdersVm>>
+	public class GetOrdersListQueryHandler : IRequestHandler<GetOrdersListQuery, IEnumerable<OrdersVm>>
 	{
 		private readonly IOrderRepository orderRepository;
 		private readonly IMapper mapper;
@@ -21,10 +21,10 @@ namespace WPFO.Ordering.Application.Features.Orders.Queries.GetOrderList
 			this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 		}
 
-		public async Task<List<OrdersVm>> Handle(GetOrdersListQuery request, CancellationToken cancellationToken)
+		public async Task<IEnumerable<OrdersVm>> Handle(GetOrdersListQuery request, CancellationToken cancellationToken)
 		{
 			var orderlist = await orderRepository.GetOrdersByUserName(request.UserName);
-			return mapper.Map<List<OrdersVm>>(orderlist);
+			return mapper.Map<IEnumerable<OrdersVm>>(orderlist);
 		}
 	}
 }

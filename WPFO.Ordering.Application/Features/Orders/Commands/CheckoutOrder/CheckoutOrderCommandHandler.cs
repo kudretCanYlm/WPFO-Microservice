@@ -7,8 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using WPFO.Core.Repositories;
 using WPFO.Ordering.Application.Contracts.Infrastructure;
-using WPFO.Ordering.Application.Contracts.Persistence;
 using WPFO.Ordering.Application.Models;
 using WPFO.Ordering.Domain.Entities;
 

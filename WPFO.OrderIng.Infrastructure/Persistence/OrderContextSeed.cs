@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,13 +11,30 @@ namespace WPFO.OrderIng.Infrastructure.Persistence
 {
 	public class OrderContextSeed
 	{
-		public static async Task SeedAsync(OrderContext orderContext, ILogger<OrderContextSeed> logger)
+		public static async Task SeedAsync(OrderContext orderContext, ILoggerFactory loggerFactory, int? retry = 0)
 		{
-			if (!orderContext.Orders.Any())
+			int retryForAvailability = retry.Value;
+
+			try
 			{
-				orderContext.Orders.AddRange(GetPreconfiguredOrders());
-				await orderContext.SaveChangesAsync();
-				logger.LogInformation("Seed database associated with context {DbContextName}", typeof(OrderContext).Name);
+				//orderContext.Database.
+
+				if (!orderContext.Orders.Any())
+				{
+					orderContext.Orders.AddRange(GetPreconfiguredOrders());
+					await orderContext.SaveChangesAsync();
+				}
+			}
+			catch (Exception exception)
+			{
+				if (retryForAvailability < 50)
+				{
+					retryForAvailability++;
+					var log = loggerFactory.CreateLogger<OrderContextSeed>();
+					log.LogError(exception.Message);
+					System.Threading.Thread.Sleep(2000);
+					await SeedAsync(orderContext, loggerFactory, retryForAvailability);
+				}
 			}
 		}
 

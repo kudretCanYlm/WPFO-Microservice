@@ -1,4 +1,6 @@
+using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,7 +29,10 @@ namespace WPFO.Discount.Api
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WPFO.Discount.Api", Version = "v1" });
             });
-        }
+
+			services.AddHealthChecks()
+	            .AddNpgSql(Configuration["DatabaseSettings:ConnectionString"]);
+		}
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -45,10 +50,15 @@ namespace WPFO.Discount.Api
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
-        }
+			app.UseEndpoints(endpoints =>
+			{
+				endpoints.MapControllers();
+				endpoints.MapHealthChecks("/hc", new HealthCheckOptions()
+				{
+					Predicate = _ => true,
+					ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+				});
+			});
+		}
     }
 }

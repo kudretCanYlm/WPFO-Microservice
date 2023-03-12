@@ -7,10 +7,17 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using WPFO.Core.Repositories.Base;
+using WPFO.Core.Repositories;
+using WPFO.OrderIng.Infrastructure.Persistence;
+using WPFO.OrderIng.Infrastructure.Repositories.Base;
+using WPFO.OrderIng.Infrastructure.Repositories;
+using EventBus.Messages;
+using RabbitMQ.Client;
+using WPFO.Ordering.API.RabbitMQ;
+using WPFO.Ordering.API.Extentions;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace WPFO.Ordering.API
 {
@@ -28,7 +35,36 @@ namespace WPFO.Ordering.API
         {
 
             services.AddControllers();
-            services.AddSwaggerGen(c =>
+            services.AddDbContext<OrderContext>(x=>x.UseSqlServer(Configuration.GetConnectionString("OrderConnection")), ServiceLifetime.Singleton);
+			services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+			services.AddScoped(typeof(IOrderRepository), typeof(OrderRepository));
+			services.AddTransient<IOrderRepository, OrderRepository>();
+			services.AddAutoMapper(typeof(Startup));
+			services.AddMediatR(typeof(Startup));
+
+			services.AddSingleton<IRabbitMQConnection>(sp =>
+			{
+				var factory = new ConnectionFactory()
+				{
+					HostName = Configuration["EventBus:HostName"]
+				};
+
+				if (!string.IsNullOrEmpty(Configuration["EventBus:UserName"]))
+				{
+					factory.UserName = Configuration["EventBus:UserName"];
+				}
+
+				if (!string.IsNullOrEmpty(Configuration["EventBus:Password"]))
+				{
+					factory.Password = Configuration["EventBus:Password"];
+				}
+
+				return new RabbitMQConnection(factory);
+			});
+
+			services.AddSingleton<EventBusRabbitMQConsumer>();
+
+			services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WPFO.Ordering.API", Version = "v1" });
             });
@@ -50,7 +86,9 @@ namespace WPFO.Ordering.API
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
+			app.UseRabbitListener();
+
+			app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });

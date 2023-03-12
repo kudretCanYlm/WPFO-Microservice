@@ -49,7 +49,10 @@ namespace WPFO.Discount.Api.Extensions
 
         private static void ExecuteMigrations(IConfiguration configuration)
         {
-            using var connection = new NpgsqlConnection(configuration.GetValue<string>("DatabaseSettings:ConnectionString"));
+            string connString = configuration.GetValue<string>("DatabaseSettings:ConnectionString");
+
+
+			using var connection = new NpgsqlConnection(connString);
             connection.Open();
 
             using var command = new NpgsqlCommand

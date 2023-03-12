@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\WPFO.Core\WPFO.Core.csproj" />
     <ProjectReference Include="..\WPFO.Ordering.Domain\WPFO.Ordering.Domain.csproj" />
   </ItemGroup>
 

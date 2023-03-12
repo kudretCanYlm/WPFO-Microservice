@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace WPFO.Ordering.Application.Features.Orders.Queries.GetOrderList
 {
-	public class GetOrdersListQuery:IRequest<List<OrdersVm>>
+	public class GetOrdersListQuery:IRequest<IEnumerable<OrdersVm>>
 	{
 		public string UserName { get; set; }
 

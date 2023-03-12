@@ -8,6 +8,7 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
 COPY ["WPFO.DiscountRPC/WPFO.DiscountRPC.csproj", "WPFO.DiscountRPC/"]
+COPY ["Common.Logging/Common.Logging.csproj", "Common.Logging/"]
 RUN dotnet restore "WPFO.DiscountRPC/WPFO.DiscountRPC.csproj"
 COPY . .
 WORKDIR "/src/WPFO.DiscountRPC"

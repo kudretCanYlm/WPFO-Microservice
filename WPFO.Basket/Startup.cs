@@ -1,16 +1,15 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using WPFO.Basket.Repositories.Interfaces;
+using WPFO.Basket.Repositories;
+using WPFO.Basket.Api.GrpcServices;
+using WPFOGRPCDiscount;
+using MassTransit;
 
 namespace WPFO.Basket
 {
@@ -26,8 +25,31 @@ namespace WPFO.Basket
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+			//redis config
+			// Redis Configuration
+			services.AddStackExchangeRedisCache(options =>
+			{
+				options.Configuration = Configuration.GetValue<string>("CacheSettings:ConnectionString");
+			});
 
-            services.AddControllers();
+			services.AddScoped<IBasketRepository, BasketRepository>();
+            services.AddAutoMapper(typeof(Startup));
+
+			// Grpc Configuration
+			services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>
+						(o => o.Address = new Uri(Configuration["GrpcSettings:DiscountUrl"]));
+			services.AddScoped<DiscountGrpcService>();
+
+			// MassTransit-RabbitMQ Configuration
+			services.AddMassTransit(config => {
+				config.UsingRabbitMq((ctx, cfg) => {
+					cfg.Host(Configuration["EventBusSettings:HostAddress"]);
+					cfg.UseHealthCheck(ctx);
+				});
+			});
+			services.AddMassTransitHostedService();
+
+			services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WPFO.Basket", Version = "v1" });
